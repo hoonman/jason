@@ -110,10 +110,11 @@ def normalize(actual_names: list, alternate_names: dict, obj):
     return normalized
 
 # usage case for normalize
-actual_names = ["name", "email"]
+actual_names = ["name", "email", "id"]
 alternate_names = {
     "name": ["fullName"],
-    "email": ["contact"]
+    "email": ["contact"],
+    "id": ["userId"]
 }
 
 for i in range(len(json_obj["users"])):
@@ -122,3 +123,37 @@ for i in range(len(json_obj["users"])):
 print("normalized json: ", json_obj)
 
 
+# handle different ID types (string vs. integer)
+# let's handle them as strings. 
+# when handling different ID types, we normalize the key names first, and then we will convert the value of each key if they are a different type
+correct_types = {
+    "name": str,
+    "email": str,
+    "id": str
+}
+
+print(json_obj)
+
+
+def handle_types(correct_types, obj):
+    for key, val in obj.items():
+        if type(val) != correct_types[key]:
+            obj[key] = correct_types[key](val)
+    return obj
+
+    
+
+for i in range(len(json_obj["users"])):
+    obj = handle_types(correct_types, json_obj["users"][i])
+    json_obj["users"][i] = obj
+    
+print("handle different ID types ",json_obj)
+
+# clean email formats. (case normalization whitespace stripping)
+# 
+def clean_email(email):
+    if email is None:
+        return
+
+    cleaned_email = email.strip().lower()
+    
