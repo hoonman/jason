@@ -1,4 +1,5 @@
 import json
+import re
 # exercise 1: flatten into a list of user-project pairs with total hours per user / project
 
 
@@ -153,7 +154,52 @@ print("handle different ID types ",json_obj)
 # 
 def clean_email(email):
     if email is None:
-        return
-
-    cleaned_email = email.strip().lower()
+        return None
+    cleaned_email = email.strip().lower()  # strips whitespace and lowercases the email addresses first
+    cleaned_email = re.sub(r'(\+[^@]*)@', '@', cleaned_email)  # remove everything between + and @ in local part
+    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', cleaned_email):
+        # the regexp
+        # ^ beginning
+        # [] -> a-z lowercase and uppercase 0-9, ., -, % + - all allowed. 
+        # @ matches the at symbol
+        # [] -> a-z lowercase and uppercase 0-9, . - 
+        # . 
+        # com, org, io, etc
+        return None  # Or raise an exception
     
+    return cleaned_email
+
+
+# Test emails - mix of valid and invalid formats
+emails = [
+    'john.doe@example.com',                # Valid
+    'JOHN.DOE@EXAMPLE.COM',                # Valid but uppercase
+    '  user@domain.com  ',                 # Valid with whitespace
+    'user+filter@gmail.com',               # Valid with + filter (will be cleaned)
+    'johndoeexample.com',                  # Invalid - missing @
+    'john.doe@',                           # Invalid - missing domain
+    '@example.com',                        # Invalid - missing username
+    'john#doe@example.com',                # Invalid - invalid character #
+    'john.doe@example.c',                  # Invalid - TLD too short
+    'john@doe@example.com',                # Invalid - multiple @ symbols
+    '',                                    # Invalid - empty string
+    None                                   # Invalid - None value
+]
+
+# Test the clean_email function
+print("Testing email cleaning function:")
+for email in emails:
+    cleaned = clean_email(email)
+    status = "Valid" if cleaned else "Invalid"
+    print(f"Original: {email} → Cleaned: {cleaned} → {status}")
+
+
+# parsing different names 
+# ex) "John Smith", vs "Smith, John"
+# i think we should do this case by case. 
+# so let's assume if it is in the format of Smith, John I will assume that this is in the format of lastName, firstName 
+# maybe there arem multiple format of names 
+def parse_names():
+
+    return
+
