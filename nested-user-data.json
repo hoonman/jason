@@ -1,6 +1,0 @@
-{
-    "users": [
-      {"id": 1, "name": "Alice", "projects": [{"title": "Alpha", "hours": 100}]},
-      {"id": 2, "name": "Bob", "projects": [{"title": "Beta", "hours": 200}, {"title": "Alpha", "hours": 50}]}
-    ]
-  }

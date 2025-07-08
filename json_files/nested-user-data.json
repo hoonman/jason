@@ -1,0 +1,39 @@
+{
+    "users": [
+      {
+        "fullName": "Jaehoon Kim",
+        "email": "jaehoon@test.com",
+        "address": {
+          "street": "Main St",
+          "number": 123
+        },
+        "phone": "+1-555-123-4567",
+        "active": true
+      },
+      {
+        "name": "Jaehoon Song",
+        "contact": {
+          "email": "jaehnsong@gmail.com",
+          "phone": "949 554 9130"
+        },
+        "address": {
+          "street": "Main st",
+          "number": 123
+        },
+        "preference": {
+          "newsletter": true,
+          "notifications": false
+        },
+        "id": "123",
+        "active": true
+      }
+    ]
+  }
+
+
+
+
+
+
+
+

@@ -1,165 +1,8 @@
 import json
 import re
-# exercise 1: flatten into a list of user-project pairs with total hours per user / project
-
-
-# let's define a bunch of commonly used functions depending on the structure of the JSON file. 
-# functions: 
-# 1. parse json -> 
-# input: file path 
-# output: data structure with JSON content
-# parses the json content into a python data structure either into a list or a object.
-
-# 2. write_json
-# input: python dictionary or list
-# output: no returned value
-# takes a python data structure and writes that content into a json file.
-
-# 3. flatten json 
-# input: python dictionary or list
-# output: flattened data 
-# 
-
-
-
-# def flatten_json(data, parent_key): # let us assume the data is a single object
-    # steps
-    # given a python data, we need to output a python data that is flattened
-    # step 1: go through the dictionary (data) 
-    # initialize a new key name like this: parent_key + '_' + key
-    # step 2: for each "value" check if it is a map or a list
-    # if the value is a list, we will go through the lsit
-    # for each item in the list, we will recurse --> flatten_json(new_dict, key)
-
-    # if the value is not a list or dictionary: 
-    # replace  
-
 
 # people are saying it is going to involve comparing two json files and seeing any mismatch stuff. let's prioritize that instead of flattening the json first. 
 
-
-
-
-
-
-# exercise 1. given a simple JSON file, load the JSON from a file and string
-# access nested values (get all the emails)
-# handle missing keys gracefully
-# compare two json objects ignoring order. 
-
-
-# for nested json: we will traverse the json until the val is no longer an instance of a dict or a list
-# assume the master element is always a dict ? 
-# if val is a dict, then 
-# if val is a list, we traverse that array in a for loop and call the function traverse_nested_json again
-
-
-
-
-json_obj = parse_json('json-file-1.json')
-print("json obj: ", json_obj)
-emails = []
-traverse_nested_json(json_obj, {'email', 'contact'}, emails)
-print("emails: ", emails)
-
-
-# exercise 2. data normalization -- different formatting in files (emails, contact, name, fullname)
-def normalize_user(user):
-    return {
-        "name": user.get("name") or user.get("fullName"),
-        "email": user.get("email") or user.get("contact")
-    }
-
-# maybe a general normalization funct where we define the "alternatives" names for the columns, and the actual columns
-def normalize(actual_names: list, alternate_names: dict, obj):
-    normalized = {}
-    for name in actual_names:
-        value = obj.get(name)
-        if value is None and name in alternate_names:
-            for alternate in alternate_names[name]:
-                value = obj.get(alternate)
-                if value is None:
-                    break
-        normalized[name] = value
-    return normalized
-
-# usage case for normalize
-actual_names = ["name", "email", "id"]
-alternate_names = {
-    "name": ["fullName"],
-    "email": ["contact"],
-    "id": ["userId"]
-}
-
-for i in range(len(json_obj["users"])):
-    json_obj["users"][i] = normalize(actual_names, alternate_names, json_obj["users"][i])
-
-print("normalized json: ", json_obj)
-
-
-# handle different ID types (string vs. integer)
-# let's handle them as strings. 
-# when handling different ID types, we normalize the key names first, and then we will convert the value of each key if they are a different type
-correct_types = {
-    "name": str,
-    "email": str,
-    "id": str
-}
-
-print(json_obj)
-
-
-
-    
-
-for i in range(len(json_obj["users"])):
-    obj = handle_types(correct_types, json_obj["users"][i])
-    json_obj["users"][i] = obj
-    
-print("handle different ID types ",json_obj)
-
-# clean email formats. (case normalization whitespace stripping)
-# 
-def clean_email(email):
-    if email is None:
-        return None
-    cleaned_email = email.strip().lower()  # strips whitespace and lowercases the email addresses first
-    cleaned_email = re.sub(r'(\+[^@]*)@', '@', cleaned_email)  # remove everything between + and @ in local part
-    if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', cleaned_email):
-        # the regexp
-        # ^ beginning
-        # [] -> a-z lowercase and uppercase 0-9, ., -, % + - all allowed. 
-        # @ matches the at symbol
-        # [] -> a-z lowercase and uppercase 0-9, . - 
-        # . 
-        # com, org, io, etc
-        return None  # Or raise an exception
-    
-    return cleaned_email
-
-
-# Test emails - mix of valid and invalid formats
-emails = [
-    'john.doe@example.com',                # Valid
-    'JOHN.DOE@EXAMPLE.COM',                # Valid but uppercase
-    '  user@domain.com  ',                 # Valid with whitespace
-    'user+filter@gmail.com',               # Valid with + filter (will be cleaned)
-    'johndoeexample.com',                  # Invalid - missing @
-    'john.doe@',                           # Invalid - missing domain
-    '@example.com',                        # Invalid - missing username
-    'john#doe@example.com',                # Invalid - invalid character #
-    'john.doe@example.c',                  # Invalid - TLD too short
-    'john@doe@example.com',                # Invalid - multiple @ symbols
-    '',                                    # Invalid - empty string
-    None                                   # Invalid - None value
-]
-
-# Test the clean_email function
-print("Testing email cleaning function:")
-for email in emails:
-    cleaned = clean_email(email)
-    status = "Valid" if cleaned else "Invalid"
-    print(f"Original: {email} → Cleaned: {cleaned} → {status}")
 
 
 # parsing different names 
@@ -326,3 +169,148 @@ class Jason:
             if type(val) != correct_types[key]:
                 obj[key] = correct_types[key](val)
         return obj
+
+    def clean_email(self, email):
+        if email is None:
+            return None
+        cleaned_email = email.strip().lower()
+        cleaned_email = re.sub(r'(\+[^@]*)@', '@', cleaned_email)
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', cleaned_email):
+            return None
+        return cleaned_email
+
+    def parse_name(self, name):
+        '''Parse different name formats and returns a standardized dictionary.'''
+        result = {
+            'first_name': None,
+            'last_name': None,
+            'middle_name': None,
+            'title': None,
+            'suffix': None,
+        }
+        if not name or not isinstance(name, str):
+            return result
+        
+        name = ' '.join(name.strip().split())
+        titles = ['mr', 'mrs', 'miss', 'dr', 'prof', 'rev', 'hon']
+        suffixes = ['jr', 'sr', 'i', 'ii','iii', 'iv', 'v', 'phd', 'md', 'esq']
+        
+        if ',' in name:
+            # Last name first format: "Smith, John"
+            parts = [p.strip() for p in name.split(',', 1)]
+            result['last_name'] = parts[0]
+            
+            # Handle remaining parts
+            remaining = parts[1].strip()
+            
+            if ',' in remaining:
+                name_part, suffix_part = [p.strip() for p in remaining.split(',', 1)]
+                remaining = name_part
+                if suffix_part.lower().replace('.', '') in suffixes:
+                    result['suffix'] = suffix_part
+            
+            name_parts = remaining.split()
+            if name_parts:
+                result['first_name'] = name_parts[0]
+                if len(name_parts) > 1:
+                    result['middle_name'] = ' '.join(name_parts[1:])
+        else:
+            # Standard format: "John Smith"
+            parts = name.split()
+            
+            if parts and parts[0].lower().replace('.', '') in titles:
+                result['title'] = parts[0]
+                parts = parts[1:]
+            
+            if parts and parts[-1].lower().replace('.', '') in suffixes:
+                result['suffix'] = parts[-1]
+                parts = parts[:-1]
+            elif len(parts) >= 2 and ',' in parts[-1]:
+                last_part = parts[-1]
+                if ',' in last_part:
+                    name_part, suffix = last_part.split(',', 1)
+                    if suffix.strip().lower().replace('.', '') in suffixes:
+                        result['suffix'] = suffix.strip()
+                        parts[-1] = name_part
+            
+            if len(parts) == 1:
+                result['first_name'] = parts[0]
+            elif len(parts) == 2:
+                result['first_name'] = parts[0]
+                result['last_name'] = parts[1]
+            elif len(parts) >= 3:
+                result['first_name'] = parts[0]
+                result['last_name'] = parts[-1]
+                result['middle_name'] = ' '.join(parts[1:-1])
+                
+        return result
+
+    def flatten_json(self, data, parent_key=''):
+        """Flatten a nested JSON object into a single level dictionary."""
+        flattened = {}
+        
+        if isinstance(data, dict):
+            for key, value in data.items():
+                new_key = f"{parent_key}_{key}" if parent_key else key
+                if isinstance(value, (dict, list)):
+                    flattened.update(self.flatten_json(value, new_key))
+                else:
+                    flattened[new_key] = value
+        elif isinstance(data, list):
+            for i, item in enumerate(data):
+                new_key = f"{parent_key}_{i}" if parent_key else str(i)
+                if isinstance(item, (dict, list)):
+                    flattened.update(self.flatten_json(item, new_key))
+                else:
+                    flattened[new_key] = item
+        else:
+            flattened[parent_key] = data
+            
+        return flattened
+
+    def compare_json(self, json1, json2, ignore_order=True):
+        """Compare two JSON objects and return a report of differences."""
+        if type(json1) != type(json2):
+            return {'type_mismatch': {'json1_type': type(json1).__name__, 'json2_type': type(json2).__name__}}
+        
+        if isinstance(json1, dict):
+            all_keys = set(json1.keys()) | set(json2.keys())
+            differences = {}
+            
+            for key in all_keys:
+                if key not in json1:
+                    differences[key] = {'missing_in_json1': json2[key]}
+                elif key not in json2:
+                    differences[key] = {'missing_in_json2': json1[key]}
+                else:
+                    sub_diff = self.compare_json(json1[key], json2[key], ignore_order)
+                    if sub_diff:
+                        differences[key] = sub_diff
+            
+            return differences if differences else {}
+        
+        elif isinstance(json1, list):
+            if ignore_order:
+                try:
+                    sorted1 = sorted(json1)
+                    sorted2 = sorted(json2)
+                    if sorted1 == sorted2:
+                        return {}
+                except:
+                    pass
+            
+            if len(json1) != len(json2):
+                return {'length_mismatch': {'json1_length': len(json1), 'json2_length': len(json2)}}
+            
+            differences = {}
+            for i, (item1, item2) in enumerate(zip(json1, json2)):
+                sub_diff = self.compare_json(item1, item2, ignore_order)
+                if sub_diff:
+                    differences[i] = sub_diff
+            
+            return differences if differences else {}
+        
+        else:
+            if json1 != json2:
+                return {'value_mismatch': {'json1_value': json1, 'json2_value': json2}}
+            return {}
