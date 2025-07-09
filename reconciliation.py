@@ -1,6 +1,6 @@
 
 import json
-import subprocess          # for jq canonicalization
+import subprocess         
 import pandas as pd
 from pandas import json_normalize
 from jsonschema import Draft7Validator
@@ -65,3 +65,20 @@ for canon in ("fileA_canon.json", "fileB_canon.json"):
 
 
     
+# load and flatten (json_normalize from pandas)
+def load_and_flatten(path):
+    data = json.load(open(path))
+    df = json_normalize(data, record_path="orders", meta=[["customer", "id"], ["customer", "name"]], record_prefix="order_", meta_prefix="cust_")
+    # we are extracting "orders" and normalizing it.
+    # meta= additional fields to normalize (extracts customer's id and name) 
+    # string to prepend to column names from the normalized records 
+    # what is the difference between normal vs. meta? (is meta just additional columns? )
+    return df
+
+dfA = load_and_flatten('fileA_canon.json')
+dfB = load_and_flatten('fileB_canon.json')
+
+
+print(dfA.info())
+
+
