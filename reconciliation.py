@@ -82,3 +82,16 @@ dfB = load_and_flatten('fileB_canon.json')
 print(dfA.info())
 
 
+# clean and cast types
+# enforce datetime dtype, float for amt, int for IDs
+# string for name
+for df in (dfA, dfB):
+    df["order_ts"] = pd.to_datetime(df["order_ts"], utc=True)
+    df["order_amt"] = df["order_amt"].astype(float)
+    df["cust_customer.id"] = df["cust_customer.id"].astype(int)
+    df["cust_customer.name"] = df["cust_customer.name"].astype("string")
+
+print(dfA.info())
+print(dfB.info())
+
+
