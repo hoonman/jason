@@ -91,7 +91,37 @@ for df in (dfA, dfB):
     df["cust_customer.id"] = df["cust_customer.id"].astype(int)
     df["cust_customer.name"] = df["cust_customer.name"].astype("string")
 
-print(dfA.info())
-print(dfB.info())
+print(dfA)
+print(dfB)
 
 
+# define recon keys
+key_cols = ["cust_customer.id", "order_order_id"]
+
+# merge & flag differences 
+merged = dfA.merge(dfB, on=key_cols, how="outer", suffixes=("_A", "_B"), indicator=True)
+
+only_A = merged[merged["_merge"] == "left_only"]
+only_B = merged[merged["_merge"] == "right_only"]
+both = merged[merged["_merge"] == "both"].copy()
+
+print("only a: \n", only_A)
+print("only B: \n", only_B)
+print("both: \n", both)
+
+print("only a: \n", only_A.info())
+print("only B: \n", only_B.info())
+print("both: \n", both.info())
+
+
+# compute per-field diffs 
+both["amt_diff"] = both["order_amt_A"] - both["order_amt_B"]
+both["ts_diff"] = both["order_ts_A"] - both["order_ts_B"]
+
+# report
+print("Records only in A: ", len(only_A))
+print("Records only in B: ", len(only_B))
+print("Shared records with amount mismatch: ", (both["amt_diff"] != 0).sum())
+print("shared records with timestamp mismatch: ", (both["ts_diff"] != datetime.timedelta(0)).sum())
+
+# dump to csv
