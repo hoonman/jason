@@ -320,8 +320,10 @@ class Reconciliation:
             f.write(f"- Match Rate: {self.metrics['match_rate']:.2%}\n")
             f.write(f"- Records only in first file: {len(differences['only_in_df1'])}\n")
             f.write(f"- Records only in second file: {len(differences['only_in_df2'])}\n")
-            f.write(f"- Fields with mismatches: {len(differences['value_mismatches'])}\n\n")
             
+            f.write(f"- Fields with mismatches: {len(differences['value_mismatches'])}\n\n")
+            f.write(f"- Actual fields with mismatches: {differences['value_mismatches']}\n\n")
+
             # Write detailed mismatches
             f.write(f"Detailed Mismatches:\n")
             for col, mismatches in differences['value_mismatches'].items():
@@ -489,11 +491,11 @@ def main():
     
     try:
         # Write sample data to files
-        with open(fileA, 'w') as f:
-            json.dump(sample_data1, f, indent=2)
+        # with open(fileA, 'w') as f:
+        #     json.dump(sample_data1, f, indent=2)
         
-        with open(fileB, 'w') as f:
-            json.dump(sample_data2, f, indent=2)
+        # with open(fileB, 'w') as f:
+        #     json.dump(sample_data2, f, indent=2)
         
         print(f"Created sample files: {fileA} and {fileB}")
         
