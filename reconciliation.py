@@ -6,8 +6,7 @@ from pandas import json_normalize
 from jsonschema import Draft7Validator
 import datetime
 
-# --- STEP 1: Canonicalize JSON on disk (structural normalization) ---
-# Choice: jq sorts keys and strips extraneous whitespace → repeatable, git‑friendly files.
+# step 1: canonicalize json on disk (structural normalization).  jq sorts keys and strips extraneous whitespace → repeatable, git‑friendly files.
 for fname in ("fileA.json", "fileB.json"):
     out = fname.replace(".json", "_canon.json")
     # subprocess.run(
@@ -19,8 +18,7 @@ for fname in ("fileA.json", "fileB.json"):
         shell=True, check=True
     )
 
-# --- STEP 2: Optional Schema Validation ---
-# Choice: Define a minimal schema to enforce presence/type of crucial fields.
+# step 2: schema validation with minimal schema to enforce presence/type of crucial fields. 
 schema = {
     "type": "array",
     "items": {
@@ -51,7 +49,7 @@ schema = {
     }
 }
 
-# validate with the schema 
+# validate with the defined schema 
 for canon in ("fileA_canon.json", "fileB_canon.json"):
     data = json.load(open(canon))
     errors = list(Draft7Validator(schema).iter_errors(data))
@@ -65,7 +63,7 @@ for canon in ("fileA_canon.json", "fileB_canon.json"):
 
 
     
-# load and flatten (json_normalize from pandas)
+# step 3: load and flatten (json_normalize from pandas)
 def load_and_flatten(path):
     data = json.load(open(path))
     df = json_normalize(data, record_path="orders", meta=[["customer", "id"], ["customer", "name"]], record_prefix="order_", meta_prefix="cust_")
@@ -82,9 +80,7 @@ dfB = load_and_flatten('fileB_canon.json')
 print(dfA.info())
 
 
-# clean and cast types
-# enforce datetime dtype, float for amt, int for IDs
-# string for name
+# step 4: clean and cast types to enforce datetime as dtype, float for amt, int for IDs, string for name
 for df in (dfA, dfB):
     df["order_ts"] = pd.to_datetime(df["order_ts"], utc=True)
     df["order_amt"] = df["order_amt"].astype(float)
@@ -98,7 +94,7 @@ print(dfB)
 # define recon keys
 key_cols = ["cust_customer.id", "order_order_id"]
 
-# merge & flag differences 
+# step 5: merge & flag differences 
 merged = dfA.merge(dfB, on=key_cols, how="outer", suffixes=("_A", "_B"), indicator=True)
 
 only_A = merged[merged["_merge"] == "left_only"]
@@ -118,10 +114,17 @@ print("both: \n", both.info())
 both["amt_diff"] = both["order_amt_A"] - both["order_amt_B"]
 both["ts_diff"] = both["order_ts_A"] - both["order_ts_B"]
 
-# report
+# step 6: report
 print("Records only in A: ", len(only_A))
 print("Records only in B: ", len(only_B))
 print("Shared records with amount mismatch: ", (both["amt_diff"] != 0).sum())
 print("shared records with timestamp mismatch: ", (both["ts_diff"] != datetime.timedelta(0)).sum())
 
 # dump to csv
+only_A.to_csv("report_only_A.csv", index=False)
+only_B.to_csv("report_only_B.csv", index=False)
+
+both[both["amt_diff"] != 0].to_csv("report_amt_mismatch.csv", index=False)
+both[both["ts_diff"] != datetime.timedelta(0)].to_csv("report_ts_mismatch.csv", index=False)
+
+# TODO: step 8 automate & schedule
