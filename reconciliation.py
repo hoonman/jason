@@ -143,7 +143,6 @@ class Reconciliation:
                 shell=True, check=True
             )
             self.canon_files.append(out)
-        
 
     def validate_with_schema(self):
         if self.canon_files:
@@ -198,6 +197,10 @@ class Reconciliation:
         print("Shared records with amount mismatch: ", (merged_objects["both"]["amt_diff"] != 0).sum())
         print("shared records with timestamp mismatch: ", (merged_objects["both"]["ts_diff"] != datetime.timedelta(0)).sum())
 
-recon = Reconciliation(["fileA.json", "fileB.json"], schema)
-print("recon calls report: ")
-recon.report()
+def main():
+    recon = Reconciliation(["fileA.json", "fileB.json"], schema)
+    print("recon calls report: ")
+    recon.report()
+    
+if __name__ == "__main__":
+    main()
