@@ -76,20 +76,12 @@ def load_and_flatten(path):
 dfA = load_and_flatten('fileA_canon.json')
 dfB = load_and_flatten('fileB_canon.json')
 
-
-print(dfA.info())
-
-
 # step 4: clean and cast types to enforce datetime as dtype, float for amt, int for IDs, string for name
 for df in (dfA, dfB):
     df["order_ts"] = pd.to_datetime(df["order_ts"], utc=True)
     df["order_amt"] = df["order_amt"].astype(float)
     df["cust_customer.id"] = df["cust_customer.id"].astype(int)
     df["cust_customer.name"] = df["cust_customer.name"].astype("string")
-
-print(dfA)
-print(dfB)
-
 
 # define recon keys
 key_cols = ["cust_customer.id", "order_order_id"]
