@@ -1,0 +1,58 @@
+{
+    "customers":[
+        {
+        "customerId": 12345,
+        "firstName": "Alice",
+        "lastName": "Nguyen",
+        "email": "alice@example.com",
+        "accountNumber": "9876543210",
+        "routingNumber": "111000025",
+        "signupDate": "2020-03-15"
+        },
+        {
+        "customerId": 23456,
+        "firstName": "Bob",
+        "lastName": "Smith",
+        "email": "bob.smith@mercury.com",
+        "accountNumber": "1234509876",
+        "routingNumber": "121042882",
+        "signupDate": "2021-11-07"
+        },
+        {
+        "customerId": 34567,
+        "firstName": "Carol",
+        "lastName": "O’Connor",
+        "email": "carol.o’connor@bankmail.com",
+        "accountNumber": "5556677788",
+        "routingNumber": "111000025",
+        "signupDate": "2022-06-21"
+        },
+        {
+        "customerId": 45678,
+        "firstName": "Dave",
+        "lastName": "Chen",
+        "email": "dave.chen@example.com",
+        "accountNumber": "4443332211",
+        "routingNumber": "121042882",
+        "signupDate": "2023-01-10"
+        },
+        {
+        "customerId": 56789,
+        "firstName": "Eve",
+        "lastName": "Martinez",
+        "email": "eve.martinez@domain.com",
+        "accountNumber": "9998887776",
+        "routingNumber": "111000025",
+        "signupDate": "2024-09-05"
+        },
+        {
+        "customerId": 67890,
+        "firstName": "Frank",
+        "lastName": "Zhang",
+        "email": "frank.zhang@mercury.com",
+        "accountNumber": "2223334445",
+        "routingNumber": "121042882",
+        "signupDate": "2025-02-28"
+        }
+    ]
+} 

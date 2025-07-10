@@ -1,0 +1,88 @@
+{
+    "customers": [
+        {
+          "id": "12345",
+          "name": {
+            "given": "Nguyen, Alice"
+          },
+          "contact": {
+            "email": "ALICE@EXAMPLE.COM"
+          },
+          "bankDetails": {
+            "acctNumMasked": "XXXX43210",
+            "rtgNum": "111000025"
+          },
+          "createdAt": "2020-03-15T12:00:00Z"
+        },
+        {
+          "id": "23456",
+          "name": {
+            "given": "Smith, Bob"
+          },
+          "contact": {
+            "email": "bob.smith@mercury.com"
+          },
+          "bankDetails": {
+            "acctNumMasked": "XXXX09876",
+            "rtgNum": "121042882"
+          },
+          "createdAt": "2021-11-07T08:45:00Z"
+        },
+        {
+          "id": "34567",
+          "name": {
+            "given": "O’Connor, Carol"
+          },
+          "contact": {
+            "email": "CAROL.O’CONNOR@bankmail.COM"
+          },
+          "bankDetails": {
+            "acctNumMasked": "XXXX77788",
+            "rtgNum": "111000025"
+          },
+          "createdAt": "2022-06-21T17:30:00Z"
+        },
+        {
+          "id": "45678",
+          "name": {
+            "given": "Chen, David"
+          },
+          "contact": {
+            "email": "d.chen@example.com"
+          },
+          "bankDetails": {
+            "acctNumMasked": "XXXX32211",
+            "rtgNum": "121042882"
+          },
+          "createdAt": "2023-01-10T09:15:00Z"
+        },
+        {
+          "id": "99999",
+          "name": {
+            "given": "Gonzalez, Maria"
+          },
+          "contact": {
+            "email": "maria.gonzalez@finance.com"
+          },
+          "bankDetails": {
+            "acctNumMasked": "XXXX12345",
+            "rtgNum": "111000025"
+          },
+          "createdAt": "2024-12-01T11:00:00Z"
+        },
+        {
+          "id": "56789",
+          "name": {
+            "given": "Martinez, Eve"
+          },
+          "contact": {
+            "email": "eve.martinez@DOMAIN.com"
+          },
+          "bankDetails": {
+            "acctNumMasked": "XXXX87776",
+            "rtgNum": "111000025"
+          },
+          "createdAt": "2024-09-05T14:20:00Z"
+        }
+      ]
+}

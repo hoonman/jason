@@ -151,7 +151,6 @@ class Jason:
             "email": user.get("email") or user.get("contact")
         }
 
-# maybe a general normalization funct where we define the "alternatives" names for the columns, and the actual columns
     def normalize(self, actual_names: list, alternate_names: dict, obj):
         normalized = {}
         for name in actual_names:

@@ -30,6 +30,8 @@ import datetime
 # both[both["ts_diff"] != datetime.timedelta(0)].to_csv("report_ts_mismatch.csv", index=False)
 
 # TODO: step 8 automate & schedule
+# TODO: add fuzzy matching for names.
+# TODO: add support for multiple types of schemas or json files types so that i can actually use this with different structures. 
 
 schema = {
     "type": "array",
@@ -68,7 +70,6 @@ class Reconciliation:
         self.canon_files = []
         self.schema = schema
         self.dataframes = []
-        # self.key_cols = ["cust_customer.id", "order_order_id"]
         self.config = {
             'key_cols': ["cust_customer.id", "order_order_id"],
             'numeric_tolerance': 0.01,
@@ -116,7 +117,7 @@ class Reconciliation:
         data = json.load(open(path))
         df = json_normalize(data, record_path="orders", meta=[["customer", "id"], ["customer", "name"]], record_prefix="order_", meta_prefix="cust_")
         # we are extracting "orders" and normalizing it.
-        # meta= additional fields to normalize (extracts customer's id and name) 
+        # meta = additional fields to normalize (extracts customer's id and name) 
         # string to prepend to column names from the normalized records 
         # what is the difference between normal vs. meta? (is meta just additional columns? )
         self.dataframes.append(df)
@@ -141,12 +142,10 @@ class Reconciliation:
         return {"only_A": only_A, "only_B": only_B, "both": both}
 
     def report(self):
-        # this function will call the rest of the functions and create a comprehensive report 
+        # this function will call the rest of the functions and create a report that summarizes the result
         self.jq_canonicalize()
         self.validate_with_schema()
-        # self.load_and_flatten()
         for file in self.canon_files:
-            print("file name in canon files: ", file)
             self.load_and_flatten(file)
         self.clean_and_cast()
         merged_objects = self.merge_flag_diffs(self.dataframes[0], self.dataframes[1])
@@ -154,7 +153,7 @@ class Reconciliation:
         print("Records only in A: ", len(merged_objects["only_A"]))
         print("Records only in B: ", len(merged_objects["only_B"]))
         print("Shared records with amount mismatch: ", (merged_objects["both"]["amt_diff"] != 0).sum())
-        print("shared records with timestamp mismatch: ", (merged_objects["both"]["ts_diff"] != datetime.timedelta(0)).sum())
+        print("Shared records with timestamp mismatch: ", (merged_objects["both"]["ts_diff"] != datetime.timedelta(0)).sum())
 
 def main():
     recon = Reconciliation(["fileA.json", "fileB.json"], schema, config={})
