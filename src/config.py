@@ -1,5 +1,5 @@
 predefined_config = {
-    'key_cols': ["cust_customer.id", "order_order_id"],
+    'key_cols': ["id", "first_name", "last_name", "email", "routing_number", "created_on"],
     'numeric_tolerance': 0.01,
     'time_tolerance_seconds': 60,
     'log_file': 'reconciliation.log',
