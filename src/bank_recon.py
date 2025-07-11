@@ -21,7 +21,10 @@ from jason import parse_name
 
 # step 1: load the json into dataframes and print them out and verify that they were loaded
 # step 2: flatten the structure by performing json_normalize
-# step 3: rename the columns
+# step 3: schema alignment --> rename the columns, data types 
+# step 4: schema validation with our predefined schema (optional but since we already have dataframes, we will skip)
+# step 5: reconcile (compare)
+# step 6: create a report
 
 
 class BankRecon:
@@ -125,6 +128,17 @@ class BankRecon:
     def get_dataframes(self):
         return self.dataframes
 
+    def clean_and_cast(self) -> None:
+        if not self.dataframes:
+            self.logger.warning("no dataframes to clean. load data first")
+
+        # try:
+        #     for i, df in enumerate(self.dataframes):
+        #         df[""]
+        return
+
+    
+
 
 
 def main():
@@ -138,8 +152,8 @@ def main():
     dataframes = bankRecon.get_dataframes()
     core = bankRecon.normalize_core(dataframes[0])
     legacy= bankRecon.normalize_legacy(dataframes[1])
-    print("core: \n", core)
-    print("legacy: \n", legacy)
+    print("core: \n", core.info())
+    print("legacy: \n", legacy.info())
 
 if __name__ == "__main__":
     main()
