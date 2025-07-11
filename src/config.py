@@ -27,13 +27,13 @@ predefined_schema = {
                 "type": "object",
                 "properties": {
                     "id": {"type": "string"},
-                    "firstName": {"type": "string"},
-                    "lastName": {"type": "string"},
+                    "first_name": {"type": "string"},
+                    "last_name": {"type": "string"},
                     "email": {"type": "string"},
-                    "accountNumber" : {"type": "string"},
-                    "accountNumberMasked" : {"type": "string"},
-                    "routingNumber" : {"type": "string"},
-                    "createdOn": {"type": "string", "format": "date-time"}
+                    "account_number" : {"type": "string"},
+                    "account_number_masked" : {"type": "string"},
+                    "routing_number" : {"type": "string"},
+                    "created_on": {"type": "string", "format": "date-time"}
                 }
             }
         }

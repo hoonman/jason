@@ -1,10 +1,20 @@
 import json
+import os
+import sys
 import logging
 import subprocess
 import pandas as pd
 from typing import Dict, List, Optional, Tuple, Union, Any
 from config import predefined_config, predefined_metrics
 from pandas import DataFrame, json_normalize
+
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# Append the `pyscripts` directory to sys.path
+pyscripts_dir = os.path.join(parent_dir, 'pyscripts')
+sys.path.append(pyscripts_dir)
+
+from jason import parse_name
 
 
 # for reconciliation for this specific file structure, we must first load the file into dataframes. flatten the structure, normalize fields, canonicalize, validate with schema.
@@ -80,17 +90,40 @@ class BankRecon:
     def normalize_legacy(self, df):
         out = pd.DataFrame({
             "id": df["customerId"].astype(str),
-            "firstName": df["firstName"].astype(str),
-            "lastName": df["lastName"].astype(str),
-            "email": df["email"].astype(str),
-            "accountNumber": df["accountNumber"].astype(str),
-            "routingNumber": df["routingNumber"].astype(str),
-            "createdOn": df["signupDate"].astype(str),
+            "first_name": df["firstName"].str.strip().str.lower(),
+            "last_name": df["lastName"].str.strip().str.lower(),
+            "email": df["email"].str.strip().str.lower(),
+            "account_number": df["accountNumber"].astype(str),
+            "routing_number": df["routingNumber"].astype(str),
+            "created_on": pd.to_datetime(df["signupDate"]).dt.date,
         })
         return out
     
     def normalize_core(self, df):
+        # normalize the names first
+        names = df["name.given"]
+        first_names = []
+        last_names = []
+        for i in range(len(names)):
+            result = parse_name(names[i])
+            first_names.append(result['first_name'].strip().lower())
+            last_names.append(result['last_name'].strip().lower())
+        print("first names: ", first_names, "\nlast names: ", last_names)
 
+        print("info of the core df: \n",df.info())
+        out = pd.DataFrame({
+            "id": df["id"].astype(str),
+            "first_name": first_names,
+            "last_names": last_names,
+            "email": df["contact.email"].str.strip().str.lower(),
+            "account_number_masked": df["bankDetails.acctNumMasked"].str.strip().str.lower(),
+            "routing_number": df["bankDetails.rtgNum"].str.strip().str.lower(),
+            "created_on": pd.to_datetime(df["createdAt"]).dt.date
+        })
+        return out
+
+    def get_dataframes(self):
+        return self.dataframes
 
 
 
@@ -99,6 +132,14 @@ def main():
     schema = {}
     bankRecon = BankRecon(files, schema)
     bankRecon.load_and_flatten(files[0])
+    bankRecon.load_and_flatten(files[1])
+
+
+    dataframes = bankRecon.get_dataframes()
+    core = bankRecon.normalize_core(dataframes[0])
+    legacy= bankRecon.normalize_legacy(dataframes[1])
+    print("core: \n", core)
+    print("legacy: \n", legacy)
 
 if __name__ == "__main__":
     main()
