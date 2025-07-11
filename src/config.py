@@ -17,3 +17,25 @@ predefined_metrics = {
     'mismatches': {},
     'run_time': 0
 }
+
+predefined_schema = {
+    "type": "object",
+    "properties": {
+        "customers": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "string"},
+                    "firstName": {"type": "string"},
+                    "lastName": {"type": "string"},
+                    "email": {"type": "string"},
+                    "accountNumber" : {"type": "string"},
+                    "accountNumberMasked" : {"type": "string"},
+                    "routingNumber" : {"type": "string"},
+                    "createdOn": {"type": "string", "format": "date-time"}
+                }
+            }
+        }
+    }
+}
